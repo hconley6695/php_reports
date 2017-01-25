@@ -41,31 +41,53 @@
 
 		$data_array = array();
 		$data_array = preg_split("/\r\n|\n|\r/", $data_in);//USE THE CELL/ROW DELIMITER; THIS TARGETS END OF LINE
-
+		
 		for($i = 0; $i < count($data_array); $i++) {
 			echo '<tr>';
 			$rows = array();
 			$rows = explode(',', $data_array[$i]);// use the cell/row delimiter what u need!
 
+
+
+
 		// THIS SPLITS THE NAMES INTO FIRST AND LAST
-			$array_names = explode(" ", $rows[1]);
+			$array_names = explode(" ", $rows[1], 2);
 			$firstName = $array_names[0];
 			$lastName = $array_names[1];
 
+		// TRYING TO ADD AN EMPTY CELL TO ROWS WITH EMPTY LAST NAME.  RIGHT NOW, AN EMAIL IS FILLING IN THAT SPOT/INDEX.
 			if($rows[1] != "Name") {
-				$rows[1] = $firstName;
-				array_splice($rows, 2, 0, $lastName);
 
+				// $mystr = $rows[1];
+				// $findme = "@";
+				// $incl = strpos($mystr, $findme); 
+
+				// if (!$incl) {
+				//THIS FIRST IF STATEMENT IS NOT MATCHING.
+				// if (preg_match("@", $lastName)) {
+					$rows[1] = $firstName;
+					array_splice($rows, 2, 0, $lastName);
+				// } else {
+					// $rows[1] = $firstName;
+					// $lastName = "empty";
+					// array_splice($rows, 2, 0, $lastName);				
+
+				// }
 
 			} else {
 				$rows[1] = "First Name";
 				array_splice($rows, 2, 0, "Last Name");
 
-			}
+			} 
+
+			//THIS IS WHERE $ROWS ARRAY HAS THE VALUES THAT I CAN SORT THEM.
+
+			
+			echo $rows[2];//THIS IS LAST NAME.
+
 
 			// THIS FOR LOOP CREATES THE TABLE
 			for($cell = 0; $cell < count($rows); $cell++) {
-
 
 				$bgcolor='#ccc';
 				if ($rows[0] != 0) {
