@@ -2,8 +2,32 @@
 <head>
 	<meta charset="utf-8">
 	<title>Working with Excel Reports</title>
-	<link rel="stylesheet" type="text/css" href="style.css">
 </head>
+<style>
+	* {
+		margin: 0;
+		padding: 0;
+	}
+
+	.container {
+		border: 1px solid blue;
+		margin: 20px auto;
+	}
+	table, td {
+		border: 1px solid #666;
+		background-color: #ccc;
+/*		height: 400px;
+		width: 800px;*/
+	}
+
+	td {
+		padding: 5px;
+		text-align: left;
+		word-wrap: nowrap;
+
+
+	}
+</style>
 <body>
 	<?php
 
