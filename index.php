@@ -40,31 +40,55 @@
 		fclose($handle);
 
 		$data_array = array();
-		$data_array = preg_split("/\r\n|\n|\r/", $data_in);
+		$data_array = preg_split("/\r\n|\n|\r/", $data_in);//USE THE CELL/ROW DELIMITER; THIS TARGETS END OF LINE
 
-		// THIS FOR LOOP CREATES THE TABLE
-		for($cell = 0; $cell < count($rows); $cell++) {
-			$bgcolor='#ccc';
-			if ($rows[0] != 0) {
-				// THIS IF/ELSE STATEMENT CREATES RED ROWS FOR THOSE THAT AREN'T 
-				if ($rows[6] != "$0.00") {
-					$bgcolor='red';
-					echo '<td style="background-color:' . $bgcolor . '">' . $rows[$cell] . '</th\d>';
-				} else {
-					$bgcolor='#ccc';
-					echo '<td style="background-color:' . $bgcolor . '">' . $rows[$cell] . '</td>';
-				}
+		for($i = 0; $i < count($data_array); $i++) {
+			echo '<tr>';
+			$rows = array();
+			$rows = explode(',', $data_array[$i]);// use the cell/row delimiter what u need!
+
+		// THIS SPLITS THE NAMES INTO FIRST AND LAST
+			$array_names = explode(" ", $rows[1]);
+			$firstName = $array_names[0];
+			$lastName = $array_names[1];
+
+			if($rows[1] != "Name") {
+				$rows[1] = $firstName;
+				array_splice($rows, 2, 0, $lastName);
+
+
 			} else {
+				$rows[1] = "First Name";
+				array_splice($rows, 2, 0, "Last Name");
 
-				echo '<th style="background-color:' . $bgcolor . '">' . $rows[$cell] . '</th>';
 			}
-		}
 
-		echo '</tr>';
-			
+			// THIS FOR LOOP CREATES THE TABLE
+			for($cell = 0; $cell < count($rows); $cell++) {
+
+
+				$bgcolor='#ccc';
+				if ($rows[0] != 0) {
+					// THIS IF/ELSE STATEMENT CREATES RED ROWS FOR THOSE THAT AREN'T 
+					if ($rows[7] != "$0.00") {
+						$bgcolor='red';
+						echo '<td style="background-color:' . $bgcolor . '">' . $rows[$cell] . '</th\d>';
+					} else {
+						$bgcolor='#ccc';
+						echo '<td style="background-color:' . $bgcolor . '">' . $rows[$cell] . '</td>';
+					}
+				} else {
+
+					echo '<th style="background-color:' . $bgcolor . '">' . $rows[$cell] . '</th>';
+				}
+			}
+
+			echo '</tr>';	
 		}
 
 		echo '</table></div>';
+
+
 
 
 	?>
