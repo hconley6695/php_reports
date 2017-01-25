@@ -42,44 +42,25 @@
 		$data_array = array();
 		$data_array = preg_split("/\r\n|\n|\r/", $data_in);
 
-		// $data_array = preg_replace('~\r\n?~', '\n', $data_in);
-		// $data_array = explode("\n", $data_in);  // IMPORTANT the delimiter here just the "new line" \r\n, use what u need instead of..
-
-////////////
-		// if ($i == 0) {
-		// 	echo "I'm awesome";
-		// 	echo '<tr>';
-		// 	$table_header = array();
-		// 	echo $data_array[$i];
-			//COMMENTED OUT WITHIN FUNCTION
-			// echo $table_header;
-
-			// $table_header = explode(',', $data_array[$i]);
-			// if ($cell = 0) {
-			// 	echo '<th>' . $table_header[$cell] . '</th'>;
-			// }
-			// echo '</tr>';
-			////WITHIN THIS BLOCK
-		// } else {
-		// 	echo "You don't know what you are doing.";
-		// }
-/////////////////
-		for($i = 1; $i < count($data_array); $i++) {
-			echo '<tr>';
-			$rows = array();
-			$rows = explode(',', $data_array[$i]);// use the cell/row delimiter what u need!
-
-
-// THIS IS TARGETING THE FIRST COLUMN, I NEED TO TARGET FIRST ROW FOR TH.
-			for($cell = 0; $cell < count($rows); $cell++) {
-				if ($cell != 0) {
-					echo '<td>' . $rows[$cell] . '</td>';
+		// THIS FOR LOOP CREATES THE TABLE
+		for($cell = 0; $cell < count($rows); $cell++) {
+			$bgcolor='#ccc';
+			if ($rows[0] != 0) {
+				// THIS IF/ELSE STATEMENT CREATES RED ROWS FOR THOSE THAT AREN'T 
+				if ($rows[6] != "$0.00") {
+					$bgcolor='red';
+					echo '<td style="background-color:' . $bgcolor . '">' . $rows[$cell] . '</th\d>';
 				} else {
-					echo '<th>' . $rows[$cell] . '</th>';
+					$bgcolor='#ccc';
+					echo '<td style="background-color:' . $bgcolor . '">' . $rows[$cell] . '</td>';
 				}
-			}
+			} else {
 
-			echo '</tr>';
+				echo '<th style="background-color:' . $bgcolor . '">' . $rows[$cell] . '</th>';
+			}
+		}
+
+		echo '</tr>';
 			
 		}
 
