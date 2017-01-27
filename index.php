@@ -31,105 +31,184 @@
 <body>
 	<?php
 
-		echo '<div class="container"><table border=1>';
+		echo '<div class="container">';
 		$fileName = 'module_2_orders.csv';
+		
 
-		$row = 1;
-		// $col = 0;
-		$titles = array();
-		if (($handle = fopen($fileName, "r")) !== FALSE) {
-		  while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
+		function openFile($fileName) {
+			$row = 1;
+			$titles = array();
+			$newArray = array();
 
-		  	if ($row == 1){
-		  		$titles = $data;
-		  		// print_r($titles[0]);//THIS JUST EQUALS 'ORDER ID'
-		  		$num= count($data);
-		  		$row++;
-		  		// for ($c=0; $c < $num; $c++) {
-
-		  		// 	// print_r($data[$c]);
-		  		// 	$new = array($data[$c]);
-		  		// 	echo'<pre>';
-		  		// 	print_r($new);
-		  		// 	// $stuff = $data[$c];
-		  		// 	return $new;
-		  		// }
-		  	} else {
-
-			  	$num = count($data);
-			    echo "<p> $num fields/arrays in line $row: <br /></p>\n";
-			    $row++;
-			    // echo '<pre>';
-		    	// print_r($data);
-
-			    for($c=0; $c < $num; $c++) {
-				    $new[$titles[$c]] = $data[$c];				    	
-				    echo '<pre>';
-				    print_r($new['Name']);
-
-		    	}
-		  	}
-	      }
+			//OPEN FILE BASED ON PARAMETER PASSED
+			if (($handle = fopen($fileName, "r")) !== FALSE) {
+				//LOOPING THROUGH ALL ROWS IN THE FILES
+			  while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
+				//IF IT'S THE FIRST ROW, MAKE IT INTO A TITLES ARRAY
+			  	if ($row == 1){
+			  		$num= count($data); //GET A TOTAL NUMBER OF COLUMNS
+			  		$titles = $data;
+			  		$row++;
+			  	} else {
+				  	$num = count($data);//ESTABLISHING TOTAL NUMBER OF COLUMNS AGAIN
+			    	// THIS FOR LOOP PUTS THE FIRST ROW AS KEYS FOR THE REMAINING ROWS OR CAN MANIPULATE THEM TO PUT THEM AS COLUMN HEADERS
+				    for($c=0; $c < $num; $c++) {
+				    	//THIS IS CREATING KEYS WITH THE FIRST ROW IN THE CSV
+					    $newArray[$data[0]][$titles[$c]] = $data[$c];	
+					}
+					$row++;	
+			  	}
+			  		
+	      	  } 
+	      	  fclose($handle);
+			}
+			// echo '<pre>';
+			// print_r($newArray);
+			return $newArray;
 		}
 
-		// echo '<pre>';
-		// print_r($titles);
 
 
-		// DAY 4 OF DRUDGING THROUGH THIS:
 
-//FIRST ATTEMPT		
-		// function importCsvToArray($fileName) {
-		// 	$row = 0;
-		// 	$col = 0;
+		function orderByLastName($data) {
+			if (!data){
+				return 0;
+			}
 
-		// 	if(($handle = fopen($fileName, "r")) !== FALSE) {
-		// 		while(($row = fgetcsv($handle)) !== FALSE) {
-		// 			echo "new row";
-		// 			// echo $row;
-		// 			echo '<pre>';
-		// 			print_r($row);
-		// 			echo '</pre>';
-		// 			// if(empty($fields)) {
-		// 			// 	$fields = $row;
-		// 			// 	continue;
-		// 			// }
-		// 			// foreach($row as $k => $value) {
-		// 			// 	$results[$col][$fields[$k]] = $value; 
-		// 			// }
-		// 			// $col++;
-		// 			// unset($row);
-		// 		}
-		// 		// if(!feof($handle)){
-		// 		// 	echo "Error: unexpected fgets() failing.";
-		// 		// }
-		// 		fclose($handle);
-		// 	}
-		// 	// return $results;
-		// // }
+			$orderLastNameArray = array();
+			//CHECK IF DATA IS PULL THROUGH THIS ARRAY
+			if(array($data)) {
+				foreach ($data as $orderId => $element) {
+					// echo '<pre>';
+					// print_r($data[0]['Name']);
+						// THIS SPLITS UP THE NAME KEY INTO FIRST AND LAST
+						$array_names = explode(" ", $element['Name']);
+						// echo '<pre>';
+						// print_r($array_names);
 
-		// foreach ($csv_file as $row => $value) {
-		// 	echo $row[$col];
-
-		// }
+						// $firstName = $array_names[0];
+						// $lastName = $array_names[1];
+						$orderLastNameArray[$array_names[count($last_name)-1]][] = $element;
+						// $orderLastNameArray['First Name'] = $firstName;
+						// $orderLastNameArray['Last Name'] = $lastName;
+						// $orderLastNameArray	
+					}
+				}
+					// THIS DELETES THE FULL NAME COLUMN
+			  		// unset($orderLastNameArray['Name']);
+			ksort($orderLastNameArray);					
+			return $orderLastNameArray;
+		}
 
 
-////////////////
+
+		function displayLastNameReport($array)  {
+			$returnString = " ";
+
+			if($array) {
+
+				// .= CONCATENATION ASSIGNMENT WHICH APPENDS WHAT IS ON THE RIGHT TO WHAT IS ON THE LEFT
+				$returnString .= '<table class="table last-name">
+					<thead>
+						<tr>
+							<th>Order Number</th>
+							<th>Name</th>
+							<th>Email</th>
+							<th>Product Category</th>
+							<th>Product</th>
+							<th>Price</th>
+							<th>Ballance Due</th>
+						</tr>
+					<thead>
+					<tbody>';
+
+			    // Loop through main array
+			    foreach ( $array as $last_name_array ){
+			      // Loop through last name array
+			      foreach ( $last_name_array as $single_contact ){
+			        $error_class = '';
+			        // Check to see if there is a balance due and apply appropriate styles
+			        // if ( dollar_to_float( $single_contact['Balance Due'] ) > 0 ){
+			        //   $error_class = ' style="background-color: #b36666"';
+			        // }
+			        $returnString .= '<tr'.$error_class.'>
+			          <td>'.$single_contact['Name'].'</td>
+			          <td>'.$single_contact['Email'].'</td>
+			          <td>'.$single_contact['Product'].'</td>
+			          <td>'.$single_contact['Product Category'].'</td>
+			          <td>'.$single_contact['Price'].'</td>
+			          <td>'.$single_contact['Balance Due'].'</td>
+			        </tr>';
+			      }
+			    }
+			    $returnString .= '</tbody></table>';
+			  }
+
+			return $returnString;
+			}
 
 
-		// THIS SPLITS THE NAMES INTO FIRST AND LAST
-			// $array_names = explode(" ", $rows[1], 2);
-			// $firstName = $array_names[0];
-			// $lastName = $array_names[1];
+// CALLING THE FIRST FUNCTION
+		$initialData = openFile($fileName);  //OPENING FILE
+		$dataByLastName = orderByLastName($initialData); //TAKING CSV FILE AND SORTING IT BY LAST NAME
+		echo '<h2>Report by Last Name</h2>';
+		echo displayLastNameReport($dataByLastName);  //NEED TO ECHO RESULTS OF 
 
-		// TRYING TO ADD AN EMPTY CELL TO ROWS WITH EMPTY LAST NAME.  RIGHT NOW, AN EMAIL IS FILLING IN THAT SPOT/INDEX.
-			// if($rows[1] != "Name") {
-			// 	$rows[1] = $firstName;
-			// 	array_splice($rows, 2, 0, $lastName);
-			// } else {
-			// 	$rows[1] = "First Name";
-			// 	array_splice($rows, 2, 0, "Last Name");
-			// } 
+		  		// echo '<pre>';
+		  		// print_r($newArray);
+
+
+
+
+
+
+
+
+		  		//THIS IS WHERE DATA SHOULD BE SORTED, BUT I CAN'T FIGURE IT OUT--ON TO MAKING BALANCES RED FOR NOW 1:00PM 1/27
+		  		// ksort($newArray);//THIS SORTS EACH ARRAY INDIVIDUALLY BY KEY
+		  		
+		  // 		usort($Newarray, function ($a, $b) {
+   	// 				return $a['optionNumber'] <=> $b['optionNumber'];
+				// });
+
+//PRINT OUT NEWARRAY RIGHT HERE!  NOT SORTED BUT EVERYTHING IS WORKING
+		  // 		echo '<pre>';  
+				// print_r($newArray);
+				// var_dump($newArray);
+
+			// THIS WAS WORKING!!!!!!!!!!!!!!!!
+				// for($i = 0; $i < count($newArray); $i++) {
+
+				// echo '<tr>';
+				// $rows = array();
+				// $rows = explode(',', $data_array[$i]);// use the cell/row delimiter what u need!
+				// echo '<pre>';
+				// print_r($newArray);//THIS GIVES ME AN ARRAY WITH ARRAYS INSIDE EACH THAT HAVE ARRAYS INSIDE EACH WITH ONE WORD??
+
+
+					// THIS FOR LOOP CREATES THE TABLE
+					// for($cell = 0; $cell < count($newArray); $cell++) {
+						// echo '<pre>';
+						// print_r($newArray);
+						// $bgcolor='#ccc';
+						// if ($newArray[0] != 0) {
+						// 	// THIS IF/ELSE STATEMENT CREATES RED ROWS FOR THOSE THAT HAVE A BALANCE 
+						// 	if ($newArray['Balance Due'] != "$0.00") {
+						// 		$bgcolor='red';
+						// 		echo '<td style="background-color:' . $bgcolor . '">' . $newArray[$cell] . '</th>';
+						// 	} else {
+						// 		$bgcolor='#ccc';
+						// 		echo '<td style="background-color:' . $bgcolor . '">' . $newArray[$cell] . '</td>';
+						// 	}
+						// } else {
+						// 	echo '<th style="background-color:' . $bgcolor . '">' . $newArray[$cell] . '</th>';
+						// }
+					// }
+
+				// echo '</tr>';	
+			// }
+
+
 
 //FIRST ATTEMPT AT SORTING
 			// function sortByLastName($arr, $col, $dir=SORT_ASC) {
@@ -158,39 +237,8 @@
 			// }
 			// sortIt($rows, SORT_ASC);
 
-
-
-
-
-
-		// THIS WAS WORKING!!!!!!!!!!!!!!!!
-		// for($i = 0; $i < count($data_array); $i++) {
-		// 	echo '<tr>';
-		// 	$rows = array();
-		// 	$rows = explode(',', $data_array[$i]);// use the cell/row delimiter what u need!
-		// 	print_r($rows);//THIS GIVES ME AN ARRAY WITH ARRAYS INSIDE EACH THAT HAVE ARRAYS INSIDE EACH WITH ONE WORD??
-
-
-			// THIS FOR LOOP CREATES THE TABLE
-			// for($cell = 0; $cell < count($rows); $cell++) {
-
-			// 	$bgcolor='#ccc';
-			// 	if ($rows[0] != 0) {
-					// THIS IF/ELSE STATEMENT CREATES RED ROWS FOR THOSE THAT HAVE A BALANCE 
-			// 		if ($rows[7] != "$0.00") {
-			// 			$bgcolor='red';
-			// 			echo '<td style="background-color:' . $bgcolor . '">' . $rows[$cell] . '</th\d>';
-			// 		} else {
-			// 			$bgcolor='#ccc';
-			// 			echo '<td style="background-color:' . $bgcolor . '">' . $rows[$cell] . '</td>';
-			// 		}
-			// 	} else {
-			// 		echo '<th style="background-color:' . $bgcolor . '">' . $rows[$cell] . '</th>';
-			// 	}
-			// }
-			// echo '</tr>';	
-		// }
-		echo '</table></div>';
+		// echo '</table>
+		echo '</div>';
 
 	?>
 
