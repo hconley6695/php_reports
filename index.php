@@ -57,8 +57,7 @@
 					    $newArray[$data[0]][$titles[$c]] = $data[$c];	
 					}
 					$row++;	
-			  	}
-			  		
+			  	}		  		
 	      	  } 
 	      	  fclose($handle);
 			}
@@ -69,12 +68,12 @@
 
 
 
-
+// THIS FUNCTION COPIED/PASTED FROM HEATHER, BUT NOT WORKING IN EITHER, I REALIZED
 		function orderByLastName($data) {
 			if (!data){
 				return 0;
 			}
-
+			//CREATE NEW ARRAY FOR ALTERED ARRAY 	
 			$orderLastNameArray = array();
 			//CHECK IF DATA IS PULL THROUGH THIS ARRAY
 			if(array($data)) {
@@ -101,6 +100,38 @@
 		}
 
 
+		function orderByCategory($data) {
+			if(!$data) {
+				return 0;
+			}
+		
+			//CREATE NEW ARRAY FOR ALTERED ARRAY
+			$orderCategoryArray = array();
+
+			if(array($data)) {
+
+				foreach ($data as $orderId => $element) {
+
+
+					// $orderCategoryArray[$element]['Product Category']['total'] = 
+					// ksort($data[$orderId]['Product Category']);
+					echo '<pre>';
+
+					$new = array($data[$orderId]['Product Category']);	
+					print_r($new);		
+					$new['Categories'] = $new[0];
+					unset($new[0]);
+					
+				
+
+				}
+
+
+			}
+
+		}
+
+
 
 		function displayLastNameReport($array)  {
 			$returnString = " ";
@@ -111,13 +142,12 @@
 				$returnString .= '<table class="table last-name">
 					<thead>
 						<tr>
-							<th>Order Number</th>
 							<th>Name</th>
 							<th>Email</th>
 							<th>Product Category</th>
 							<th>Product</th>
 							<th>Price</th>
-							<th>Ballance Due</th>
+							<th>Balance Due</th>
 						</tr>
 					<thead>
 					<tbody>';
@@ -130,15 +160,28 @@
 			        // Check to see if there is a balance due and apply appropriate styles
 			        // if ( dollar_to_float( $single_contact['Balance Due'] ) > 0 ){
 			        //   $error_class = ' style="background-color: #b36666"';
-			        // }
-			        $returnString .= '<tr'.$error_class.'>
-			          <td>'.$single_contact['Name'].'</td>
-			          <td>'.$single_contact['Email'].'</td>
-			          <td>'.$single_contact['Product'].'</td>
-			          <td>'.$single_contact['Product Category'].'</td>
-			          <td>'.$single_contact['Price'].'</td>
-			          <td>'.$single_contact['Balance Due'].'</td>
-			        </tr>';
+			        // }			        
+	        		if ($single_contact['Balance Due'] != "$0.00") {
+						$bgcolor='red';				
+       					$returnString .= '<tr'.$error_class.'>
+				          <td style="background-color:' . $bgcolor .'">'.$single_contact['Name'].'</td>
+				          <td style="background-color:' . $bgcolor .'">'.$single_contact['Email'].'</td>
+				          <td style="background-color:' . $bgcolor .'">'.$single_contact['Product'].'</td>
+				          <td style="background-color:' . $bgcolor .'">'.$single_contact['Product Category'].'</td>
+				          <td style="background-color:' . $bgcolor .'">'.$single_contact['Price'].'</td>
+				          <td style="background-color:' . $bgcolor .'">'.$single_contact['Balance Due'].'</td>
+				        </tr>';
+				    } else {
+				    	$bgcolor='#ccc';				
+				        $returnString .= '<tr >
+				          <td>'.$single_contact['Name'].'</td>
+				          <td>'.$single_contact['Email'].'</td>
+				          <td>'.$single_contact['Product'].'</td>
+				          <td>'.$single_contact['Product Category'].'</td>
+				          <td>'.$single_contact['Price'].'</td>
+				          <td>'.$single_contact['Balance Due'].'</td>
+				        </tr>';
+				    }
 			      }
 			    }
 			    $returnString .= '</tbody></table>';
@@ -148,96 +191,35 @@
 			}
 
 
-// CALLING THE FIRST FUNCTION
+		function displayByCategory($array) {
+			$returnString = " ";
+
+			if($array) {
+				$returnString .= '<table class="table last-name">
+					<thead>
+						<tr>
+							<th>Category</th>
+							<th>Total</th>
+							<th>No. of Orders</th>
+							<th>Average Cost</th>
+						</tr>
+					<thead>
+					<tbody>';
+				$returnString .='</tbody></table>';
+
+			}
+			return $returnString;	
+		}
+
+
+// CALLING THE FUNCTIONS
 		$initialData = openFile($fileName);  //OPENING FILE
 		$dataByLastName = orderByLastName($initialData); //TAKING CSV FILE AND SORTING IT BY LAST NAME
+		$dataByCategory = orderByCategory($initialData); //TAKING CSV FILE AND SORTING IT BY CATEGORY
 		echo '<h2>Report by Last Name</h2>';
-		echo displayLastNameReport($dataByLastName);  //NEED TO ECHO RESULTS OF 
-
-		  		// echo '<pre>';
-		  		// print_r($newArray);
-
-
-
-
-
-
-
-
-		  		//THIS IS WHERE DATA SHOULD BE SORTED, BUT I CAN'T FIGURE IT OUT--ON TO MAKING BALANCES RED FOR NOW 1:00PM 1/27
-		  		// ksort($newArray);//THIS SORTS EACH ARRAY INDIVIDUALLY BY KEY
-		  		
-		  // 		usort($Newarray, function ($a, $b) {
-   	// 				return $a['optionNumber'] <=> $b['optionNumber'];
-				// });
-
-//PRINT OUT NEWARRAY RIGHT HERE!  NOT SORTED BUT EVERYTHING IS WORKING
-		  // 		echo '<pre>';  
-				// print_r($newArray);
-				// var_dump($newArray);
-
-			// THIS WAS WORKING!!!!!!!!!!!!!!!!
-				// for($i = 0; $i < count($newArray); $i++) {
-
-				// echo '<tr>';
-				// $rows = array();
-				// $rows = explode(',', $data_array[$i]);// use the cell/row delimiter what u need!
-				// echo '<pre>';
-				// print_r($newArray);//THIS GIVES ME AN ARRAY WITH ARRAYS INSIDE EACH THAT HAVE ARRAYS INSIDE EACH WITH ONE WORD??
-
-
-					// THIS FOR LOOP CREATES THE TABLE
-					// for($cell = 0; $cell < count($newArray); $cell++) {
-						// echo '<pre>';
-						// print_r($newArray);
-						// $bgcolor='#ccc';
-						// if ($newArray[0] != 0) {
-						// 	// THIS IF/ELSE STATEMENT CREATES RED ROWS FOR THOSE THAT HAVE A BALANCE 
-						// 	if ($newArray['Balance Due'] != "$0.00") {
-						// 		$bgcolor='red';
-						// 		echo '<td style="background-color:' . $bgcolor . '">' . $newArray[$cell] . '</th>';
-						// 	} else {
-						// 		$bgcolor='#ccc';
-						// 		echo '<td style="background-color:' . $bgcolor . '">' . $newArray[$cell] . '</td>';
-						// 	}
-						// } else {
-						// 	echo '<th style="background-color:' . $bgcolor . '">' . $newArray[$cell] . '</th>';
-						// }
-					// }
-
-				// echo '</tr>';	
-			// }
-
-
-
-//FIRST ATTEMPT AT SORTING
-			// function sortByLastName($arr, $col, $dir=SORT_ASC) {
-			// 	$sort_last = array();
-			// 	foreach ($$arr as $key => $row) {
-			// 		$sort_last[$key] = $row[$col];
-					
-			// 	}
-			// 	array_multisort($sort_last, $dir, $arr);
-			// }
-			// sortByLastName($rows);
-
-// SECOND ATTEMPT AT SORTING
-			// function sortIt($outerArr, $innerArr, $direction) {
-			// 	$rowsB = array();
-			// 	foreach($outerArr as $innerArr => $stuff) {
-			// 		// print_r($innerArr);//ANSWER: 0123456
-			// 		// echo $stuff;//ANSWER: ORDER IDFIRST NAMELAST NAME....
-			// 		// foreach($innerArr as $inmostArr => $stuff) {
-			// 		// 	print_r($inmostArr);
-			// 		// }
-
-			// 		// print_r($rowsB);
-			// 		}
-			// 		// array_multisort($rowsB);
-			// }
-			// sortIt($rows, SORT_ASC);
-
-		// echo '</table>
+		echo displayLastNameReport($dataByLastName);
+		echo '<h2>Report by Category</h2>';
+		echo displayByCategory($dataByCategory);  //NEED TO ECHO RESULTS OF 		  		
 		echo '</div>';
 
 	?>
